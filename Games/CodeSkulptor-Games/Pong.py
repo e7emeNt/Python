@@ -20,6 +20,8 @@ paddle2_vel = 0
 paddle1_pos = [HALF_PAD_WIDTH, HEIGHT / 2]
 paddle2_pos = [(WIDTH - 1 - HALF_PAD_WIDTH), HEIGHT / 2]
 
+rainbows_and_unicorns = False
+
 
 #<=============== Helper Function Zone =================>
 def spawn_ball(direction):
@@ -39,7 +41,7 @@ def new_game():
     
     
 def draw(canvas):
-    global score1, score2, paddle1_pos, paddle2_pos, ball_pos, ball_vel 
+    global score1, score2, paddle1_pos, paddle2_pos, ball_pos, ball_vel, rainbows_and_unicorns
         
     # draw mid line and gutters
     canvas.draw_line([WIDTH / 2, 0],[WIDTH / 2, HEIGHT], 1, "White")
@@ -69,6 +71,10 @@ def draw(canvas):
     elif paddle2_pos[1] <= HALF_PAD_HEIGHT:
         paddle2_vel == 0
         paddle2_pos[1] = HALF_PAD_HEIGHT
+    
+    # nothing to see here!
+    if rainbows_and_unicorns:
+        ball_vel[0] += 0.1
         
     # determine whether the ball touches the gutters or paddle and ball collide    
     if ball_pos[0] <= PAD_WIDTH + BALL_RADIUS:
@@ -106,7 +112,7 @@ def draw(canvas):
     canvas.draw_text(str(score2), (WIDTH * 3/4, HEIGHT * 1/4), 40, "White")
     
 def keydown(key):
-    global paddle1_vel, paddle2_vel
+    global paddle1_vel, paddle2_vel, rainbows_and_unicorns
     vel = 8
     
     if key == simplegui.KEY_MAP["w"]:
@@ -117,9 +123,11 @@ def keydown(key):
         paddle2_vel = -vel
     if key == simplegui.KEY_MAP["down"]:
         paddle2_vel = vel
+    if key == simplegui.KEY_MAP["q"]:
+        rainbows_and_unicorns = True
 
 def keyup(key):
-    global paddle1_vel, paddle2_vel
+    global paddle1_vel, paddle2_vel, rainbows_and_unicorns
     
     if key == simplegui.KEY_MAP["w"]:
         paddle1_vel = 0
@@ -129,6 +137,8 @@ def keyup(key):
         paddle2_vel = 0
     if key == simplegui.KEY_MAP["down"]:
         paddle2_vel = 0
+    if key == simplegui.KEY_MAP["q"]:
+        rainbows_and_unicorns = False
 
 
 #<==================== Frame Zone ======================>
