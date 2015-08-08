@@ -91,26 +91,26 @@ class WordTrigger(Trigger):
         self.word = word
 
     def isWordIn(self, text):
-        trimlst = [w.strip(string.punctuation).lower for w in text]
+        trimlst = [w.strip(string.punctuation).lower() for w in text.split(" ")]
         for w in trimlist:
-            if w == word:
+            if w == self.word.lower():
                 return True
         return False
 
 
 class TitleTrigger(WordTrigger):
     def evaluate(self, story):
-        return isWordIn(self, story.getTitle())
+        return self.isWordIn(self, story.getTitle())
 
 
 class SubjectTrigger(WordTrigger):
     def evaluate(self, story):
-        return isWordIn(self, story.getSubject())
+        return self.isWordIn(self, story.getSubject())
 
 
 class SummaryTrigger(WordTrigger):
     def evaluate(self, story):
-        return isWordIn(self, story.getSummary())
+        return self.isWordIn(self, story.getSummary())
 
 
 
