@@ -1,3 +1,3 @@
-Mini-Projects
+Python Files
 ============
-Just some mini python projects, for personal learning and use.
+Just some mini python files, for personal learning and use.
