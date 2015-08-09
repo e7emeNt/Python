@@ -91,42 +91,74 @@ class WordTrigger(Trigger):
         self.word = word
 
     def isWordIn(self, text):
-        trimlst = [w.strip(string.punctuation).lower() for w in text.split(" ")]
-        for w in trimlist:
-            if w == self.word.lower():
-                return True
-        return False
+        for c in string.punctuation:
+        	text = text.replace(c, " ")
+        text = text.lower()
+        tmplst = text.split(" ")
+        return self.word.lower() in tmplst
+
 
 
 class TitleTrigger(WordTrigger):
     def evaluate(self, story):
-        return self.isWordIn(self, story.getTitle())
+        return self.isWordIn(story.getTitle())
 
 
 class SubjectTrigger(WordTrigger):
     def evaluate(self, story):
-        return self.isWordIn(self, story.getSubject())
+        return self.isWordIn(story.getSubject())
 
 
 class SummaryTrigger(WordTrigger):
     def evaluate(self, story):
-        return self.isWordIn(self, story.getSummary())
-
-
+        return self.isWordIn(story.getSummary())
 
 
 # Composite Triggers
 # Problems 6-8
 
-# TODO: NotTrigger
-# TODO: AndTrigger
-# TODO: OrTrigger
+class NotTrigger(Trigger):
+	def __init__(self, trigger):
+		self.trigger = trigger
+		
+	def evaluate(self, story):
+		return not self.trigger.evaluate(story)
+
+
+class AndTrigger(Trigger):
+	def __init__(self, trigger1, trigger2):
+		self.trigger1 = trigger1
+		self.trigger2 = trigger2
+
+	def evaluate(self, story):
+		return self.trigger1.evaluate(story) and self.trigger2.evaluate(story)
+
+
+class OrTrigger(Trigger):
+	def __init__(self, trigger1, trigger2):
+		self.trigger1 = trigger1
+		self.trigger2 = trigger2
+
+	def evaluate(self, story):
+		return self.trigger1.evaluate(story) or self.trigger2.evaluate(story)
 
 
 # Phrase Trigger
 # Question 9
 
-# TODO: PhraseTrigger
+class PhraseTrigger(Trigger):
+	def __init__(self, phrase):
+		self.phrase = phrase
+
+	def evaluate(self, story):
+		if self.phrase in story.getTitle():
+			return True
+		elif self.phrase in story.getSubject():
+			return True
+		elif self.phrase in story.getSummary():
+			return True
+		else:
+			return False
 
 
 #======================
@@ -140,9 +172,14 @@ def filterStories(stories, triggerlist):
 
     Returns: a list of only the stories for which a trigger in triggerlist fires.
     """
-    # TODO: Problem 10
-    # This is a placeholder (we're just returning all the stories, with no filtering) 
-    return stories
+    result = []
+    for story in stories:
+    	for trigger in triggerlist:
+    		if trigger.evaluate(story):
+    			result.append(story)
+    			break
+    return result
+
 
 #======================
 # Part 4
@@ -164,7 +201,35 @@ def makeTrigger(triggerMap, triggerType, params, name):
 
     Returns a new instance of a trigger (ex: TitleTrigger, AndTrigger).
     """
-    # TODO: Problem 11
+    thistrigger = None
+
+    if triggerType == 'TITLE':
+    	thistrigger = TitleTrigger(params[0])
+
+    elif triggerType == 'SUBJECT':
+    	thistrigger = SubjectTrigger(params[0])
+
+    elif triggerType == 'SUMMARY':
+    	thistrigger = SummaryTrigger(params[0])
+
+    elif triggerType == 'PHRASE':
+    	thistrigger = PhraseTrigger(' '.join(params))
+
+    elif triggerType == 'NOT':
+    	thistrigger = NotTrigger(params[0])
+
+    elif triggerType == 'AND':
+    	thistrigger = AndTrigger(triggerMap[params[0]], triggerMap[params[1]])
+
+    elif triggerType == 'OR':
+    	thistrigger = OrTrigger(triggerMap[params[0]], triggerMap[params[1]])
+
+
+    triggerMap[name] = thistrigger
+    return thistrigger
+
+
+
 
 
 def readTriggerConfig(filename):
@@ -218,13 +283,13 @@ def main_thread(master):
         # These will probably generate a few hits...
         t1 = TitleTrigger("Obama")
         t2 = SubjectTrigger("Romney")
-        t3 = PhraseTrigger("Election")
+        t3 = PhraseTrigger("New York")
         t4 = OrTrigger(t2, t3)
-        triggerlist = [t1, t4]
+        # triggerlist = [t1, t4]
         
         # TODO: Problem 11
         # After implementing makeTrigger, uncomment the line below:
-        # triggerlist = readTriggerConfig("triggers.txt")
+        triggerlist = readTriggerConfig("triggers.txt")
 
         # **** from here down is about drawing ****
         frame = Frame(master)
