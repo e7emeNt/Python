@@ -216,7 +216,7 @@ def makeTrigger(triggerMap, triggerType, params, name):
     	thistrigger = PhraseTrigger(' '.join(params))
 
     elif triggerType == 'NOT':
-    	thistrigger = NotTrigger(params[0])
+    	thistrigger = NotTrigger(triggerMap[params[0]])
 
     elif triggerType == 'AND':
     	thistrigger = AndTrigger(triggerMap[params[0]], triggerMap[params[1]])
@@ -285,11 +285,11 @@ def main_thread(master):
         t2 = SubjectTrigger("Romney")
         t3 = PhraseTrigger("New York")
         t4 = OrTrigger(t2, t3)
-        # triggerlist = [t1, t4]
+        triggerlist = [t1, t4]
         
         # TODO: Problem 11
         # After implementing makeTrigger, uncomment the line below:
-        triggerlist = readTriggerConfig("triggers.txt")
+        # triggerlist = readTriggerConfig("triggers.txt")
 
         # **** from here down is about drawing ****
         frame = Frame(master)
@@ -344,7 +344,7 @@ def main_thread(master):
 if __name__ == '__main__':
 
     root = Tk()
-    root.title("Some RSS parser")
+    root.title("Awesome RSS parser")
     thread.start_new_thread(main_thread, (root,))
     root.mainloop()
 
